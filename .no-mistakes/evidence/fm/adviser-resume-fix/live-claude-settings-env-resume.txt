@@ -1,0 +1,9 @@
+## settings.local.json (as fm-spawn writes it for a claude secondmate home)
+{"env":{"COMPACT_ADVISER_DISABLE":"1"}}
+## launch env: COMPACT_ADVISER_DISABLE unset via env -u
+## fresh start: claude -p --session-id 8e888804-e832-4d7b-9820-cec943e26f58
+1
+## native-restore style resume (variable not exported): claude --resume 8e888804-e832-4d7b-9820-cec943e26f58 -p
+1
+## control: same resume after removing settings.local.json
+UNSET
