@@ -1056,7 +1056,8 @@ test_claude_secondmate_relaunch_keeps_home_settings_entries() {
   local dir home settings out rc
   dir=$(new_case smsettings sm8)
   home="$dir/home"
-  mkdir -p "$home/data/sm8"
+  mkdir -p "$home/config" "$home/data/sm8"
+  printf 'claude\n' > "$home/config/secondmate-harness"
   printf '# secondmate brief\n' > "$home/data/sm8/brief.md"
   fm_git_worktree "$dir/proj" "$dir/smhome" sm-branch
   mkdir -p "$dir/smhome/state" "$dir/smhome/data" "$dir/smhome/bin" "$dir/smhome/.claude"

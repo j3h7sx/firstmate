@@ -991,8 +991,6 @@ After a terminal server restart, Herdr opens a fresh pane shell and runs `claude
 For a Claude worker, the spawn therefore also writes the variable into the `env` of the worktree's untracked `.claude/settings.local.json`, or of the secondmate home's, which Claude applies to its own process on every start, resumed sessions included.
 Pi and Codex sessions that Herdr restores natively have no such project-local carrier, so a restart can resume them without the variable.
 
-Each firstmate worktree, a secondmate home included, takes `autoCompactWindow` from the main checkout's `.claude/settings.local.json`, so an earlier note that workers keep the default window does not hold for firstmate worktrees.
-
 Firstmate provides no configuration or flag to change this value.
 This applies only to agents Firstmate launches; the captain's own primary Firstmate session is never given the variable.
 
