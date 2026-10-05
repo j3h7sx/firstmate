@@ -1,0 +1,35 @@
+=== commit f470a01: fm-teardown.sh lull-appstore-copy --force (lab home, meta has no worktree= line) ===
+--- meta:
+window=firstmate:fm-lull-appstore-copy
+endpoint_task_id=lull-appstore-copy
+project=/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-lab.Gb4ekt/proj
+kind=scout
+decisions_reviewed=1
+decision_keys=
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-lab.Gb4ekt
+REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+exit=1
+--- after: meta present? yes; report present? yes
+=== commit 10c35cc: fm-teardown.sh lull-appstore-copy --force (lab home, meta has no worktree= line) ===
+--- meta:
+window=firstmate:fm-lull-appstore-copy
+endpoint_task_id=lull-appstore-copy
+project=/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-lab.JZh9Au/proj
+kind=scout
+decisions_reviewed=1
+decision_keys=
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-lab.JZh9Au
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+error: tmux window firstmate:fm-lull-appstore-copy could not be read after its close, so whether it survived is unknown
+error: the tmux endpoint firstmate:fm-lull-appstore-copy for lull-appstore-copy could not be closed, so it may still be live.
+error: --force authorizes continuing past a close that failed, so this cleanup proceeds toward removing the task's records; reconcile firstmate:fm-lull-appstore-copy yourself, because nothing here can still be relied on to name it.
+teardown lull-appstore-copy complete (window firstmate:fm-lull-appstore-copy; scout record named no worktree, so no slot was returned)
+Backlog: lull-appstore-copy just finished (this home keeps no markdown backlog at /private/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T/fm-lab.JZh9Au/data/backlog.md). Update /private/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T/fm-lab.JZh9Au/data/backlog.md - move lull-appstore-copy to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+--- after: meta present? no; report present? yes

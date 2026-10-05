@@ -1,0 +1,30 @@
+=== commit f470a01 ===
+ok - fm-teardown: a stale record in another home retires records-only, then the claimant tears down
+SCENARIO test_stale_record_in_another_home_retires_then_claimant_tears_down: PASS
+not ok - teardown of a finished scout with no worktree line failed: REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+SCENARIO test_scout_without_worktree_line_finishes_cleanup: FAIL
+ok - fm-teardown: a pool slot claimed by another task is left alone while the task's own cleanup finishes
+SCENARIO test_reassigned_pool_slot_finishes_own_cleanup_without_touching_the_slot: PASS
+ok - fm-teardown: a stale record on a claimed slot retires, then the claimant tears down
+SCENARIO test_stale_record_on_claimed_slot_retires_then_claimant_tears_down: PASS
+ok - fm-teardown: a pool slot held by another firstmate home is never returned
+SCENARIO test_cross_home_pool_slot_collision_refuses: PASS
+ok - fm-teardown: a task's own slot claim, and an unclaimed slot, both still tear down
+SCENARIO test_own_and_absent_slot_claims_still_tear_down: PASS
+ok - fm-teardown: missing, empty, malformed, ambiguous, and task-mismatched endpoints refuse before every mutation or runtime call
+SCENARIO test_invalid_endpoint_records_refuse_before_mutation: PASS
+=== commit 10c35cc ===
+ok - fm-teardown: a stale record in another home retires records-only, then the claimant tears down
+SCENARIO test_stale_record_in_another_home_retires_then_claimant_tears_down: PASS
+ok - fm-teardown: a finished scout with no worktree line completes; ships, reportless scouts, and empty lines still refuse
+SCENARIO test_scout_without_worktree_line_finishes_cleanup: PASS
+ok - fm-teardown: a pool slot claimed by another task is left alone while the task's own cleanup finishes
+SCENARIO test_reassigned_pool_slot_finishes_own_cleanup_without_touching_the_slot: PASS
+ok - fm-teardown: a stale record on a claimed slot retires, then the claimant tears down
+SCENARIO test_stale_record_on_claimed_slot_retires_then_claimant_tears_down: PASS
+ok - fm-teardown: a pool slot held by another firstmate home is never returned
+SCENARIO test_cross_home_pool_slot_collision_refuses: PASS
+ok - fm-teardown: a task's own slot claim, and an unclaimed slot, both still tear down
+SCENARIO test_own_and_absent_slot_claims_still_tear_down: PASS
+ok - fm-teardown: missing, empty, malformed, ambiguous, and task-mismatched endpoints refuse before every mutation or runtime call
+SCENARIO test_invalid_endpoint_records_refuse_before_mutation: PASS

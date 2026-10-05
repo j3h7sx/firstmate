@@ -1,0 +1,12 @@
+=== ship-no-worktree (fix 10c35cc) meta extra: kind=ship decisions_reviewed=1 decision_keys= ===
+REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+exit=1; meta kept? yes
+=== scout-empty-worktree (fix 10c35cc) meta extra: worktree= kind=scout decisions_reviewed=1 decision_keys= ===
+REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+exit=1; meta kept? yes
+=== scout-no-report (fix 10c35cc) meta extra: kind=scout decisions_reviewed=1 decision_keys= ===
+REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+exit=1; meta kept? yes
+=== scout-gate-open (fix 10c35cc) meta extra: kind=scout ===
+REFUSED: task lull-appstore-copy has a missing, empty, or ambiguous worktree identity; preserving task state.
+exit=1; meta kept? yes
