@@ -74,7 +74,8 @@
 # declared scratch and the report at data/<task-id>/report.md is the work
 # product. Teardown proceeds only once the report exists and the shared
 # unresolved-decision completion gate verifies its captain-held inventory.
-# A scout whose record has no worktree= line at all has no slot to return: once
+# A scout whose record has no worktree identity at all (no worktree= line and no
+# backend worktree id such as orca_worktree_id) has no slot to return: once
 # its report exists and that gate passes, teardown finishes the rest of its
 # cleanup and skips every slot step, even under --force. Without the report and
 # a passing gate, and for any other kind, the missing worktree identity still
@@ -1116,13 +1117,15 @@ WT=$(fm_meta_get "$META" worktree)
 PROJ=$(fm_meta_get "$META" project)
 T_ORCA=
 # A finished scout whose record never named a worktree has no slot to return, so
-# the shared validator's worktree requirement would only strand it. The report and
-# the captain-call gate must already pass; every slot step is then skipped through
-# teardown_owns_worktree, exactly as for a reassigned slot.
+# the shared validator's worktree requirement would only strand it. The record must
+# carry no worktree identity of any kind (no worktree= and no backend id such as
+# orca_worktree_id), and the report and the captain-call gate must already pass;
+# every slot step is then skipped through teardown_owns_worktree, exactly as for a
+# reassigned slot.
 TEARDOWN_NO_WORKTREE=0
 TEARDOWN_VALIDATE_WORKTREE_ARG=
 if [ "$TEARDOWN_META_KIND" = scout ] && [ -z "$WT" ] \
-   && [ "$(LC_ALL=C grep -c '^worktree=' "$META" 2>/dev/null || true)" = 0 ] \
+   && [ "$(LC_ALL=C grep -c '^[a-z_]*worktree[a-z_]*=' "$META" 2>/dev/null || true)" = 0 ] \
    && [ -f "$DATA/$ID/report.md" ] \
    && FM_HOME="$FM_HOME" FM_STATE_OVERRIDE="$STATE" FM_DATA_OVERRIDE="$DATA" \
       FM_CONFIG_OVERRIDE="$CONFIG" "$SCRIPT_DIR/fm-captain-hold.sh" verify "$ID" >/dev/null 2>&1; then

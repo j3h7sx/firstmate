@@ -1135,6 +1135,36 @@ test_scout_without_worktree_line_finishes_cleanup() {
   pass "fm-teardown: a finished scout with no worktree line completes; ships, reportless scouts, and empty lines still refuse"
 }
 
+# The no-worktree scout exemption covers only a record with no worktree identity
+# of any kind. An Orca scout that names an orca_worktree_id but no worktree= line
+# still refuses, so teardown never runs `orca worktree rm` on a copy it did not
+# identify.
+test_scout_with_orca_worktree_id_but_no_worktree_line_refuses() {
+  local dir id=orca-scout-no-worktree
+
+  dir=$(make_case scout-orca-id-no-worktree)
+  cat > "$dir/fakebin/orca" <<'SH'
+#!/usr/bin/env bash
+printf 'orca' >> "${FM_RUNTIME_LOG:?}"
+printf ' <%s>' "$@" >> "${FM_RUNTIME_LOG:?}"
+printf '\n' >> "${FM_RUNTIME_LOG:?}"
+exit 0
+SH
+  chmod +x "$dir/fakebin/orca"
+  fm_write_meta "$dir/home/state/$id.meta" \
+    "window=fm-$id" "endpoint_task_id=$id" "terminal=term-7" \
+    "project=$dir/project" "backend=orca" "orca_worktree_id=worktree-9::/orca/worktree-9" \
+    "kind=scout" "decisions_reviewed=1" "decision_keys="
+  mkdir -p "$dir/home/data/$id"
+  printf 'report\n' > "$dir/home/data/$id/report.md"
+  assert_refused_without_mutation "$dir" "$id" "Orca scout with an orca_worktree_id and no worktree line"
+  assert_present "$dir/home/data/$id/report.md" "the refused Orca scout teardown removed the report"
+  assert_contains "$(cat "$dir/stderr")" "worktree identity" \
+    "an Orca scout with no worktree line should keep the worktree identity refusal"
+
+  pass "fm-teardown: a scout with an orca_worktree_id but no worktree line still refuses"
+}
+
 # The two states that must never become a false refusal: the task's own claim,
 # and no claim at all (a slot taken before claims existed, or already returned).
 test_own_and_absent_slot_claims_still_tear_down() {
@@ -1558,6 +1588,7 @@ test_reassigned_pool_slot_finishes_own_cleanup_without_touching_the_slot
 test_stale_record_on_claimed_slot_retires_then_claimant_tears_down
 test_stale_record_in_another_home_retires_then_claimant_tears_down
 test_scout_without_worktree_line_finishes_cleanup
+test_scout_with_orca_worktree_id_but_no_worktree_line_refuses
 test_own_and_absent_slot_claims_still_tear_down
 test_recorded_endpoint_that_changed_directory_still_tears_down
 test_project_lock_anchors_at_the_local_root_across_home_layouts
