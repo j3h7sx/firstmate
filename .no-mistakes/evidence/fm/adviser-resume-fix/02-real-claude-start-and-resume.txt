@@ -1,0 +1,15 @@
+### fresh
+home=/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-adviser-live.qqkEK6/fresh
+launch shell COMPACT_ADVISER_DISABLE=UNSET
+start: session=d56650a1-ee79-4d35-b711-bf7b11ea8a2c result=1
+resume: session=d56650a1-ee79-4d35-b711-bf7b11ea8a2c result=1
+### existing
+home=/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-adviser-live.qqkEK6/existing
+launch shell COMPACT_ADVISER_DISABLE=UNSET
+start: session=da8b2c6e-8ed4-4389-80a5-e4699e0cbd52 result=1
+resume: session=da8b2c6e-8ed4-4389-80a5-e4699e0cbd52 result=1
+### control-no-carrier
+home=/var/folders/rg/3h7bt7ls47jb3_r3yg678m7m0000gn/T//fm-adviser-live.qqkEK6/control-no-carrier
+launch shell COMPACT_ADVISER_DISABLE=UNSET
+start: session=22e77cd0-321b-4878-8389-482f5a44016e result=UNSET
+resume: session=22e77cd0-321b-4878-8389-482f5a44016e result=UNSET
