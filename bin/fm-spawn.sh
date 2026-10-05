@@ -1466,6 +1466,12 @@ clear_relaunch_harness_wiring() {
   fi
   while IFS= read -r path; do
     [ -n "$path" ] || continue
+    # A secondmate home's settings.local.json is not firstmate wiring: it holds
+    # no busy hooks, only the merged compact-adviser switch beside the home's
+    # own entries, so a relaunch keeps it and merges into it again.
+    if [ "$KIND" = secondmate ] && [ "$path" = "$wt/.claude/settings.local.json" ]; then
+      continue
+    fi
     rm -f -- "$path" || return 1
   done <<EOF
 $(fm_control_harness_wiring_paths "$harness" "$wt" "$state" "$id")
