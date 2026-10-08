@@ -17,10 +17,10 @@
 # shell (`-l -c`) so the server inherits the account's own environment; the
 # gui/<uid> launchd domain it is bootstrapped into, not the shell, is what
 # gives the server and its panes the Aqua audit session and login-keychain
-# access. The guard runs the server as a supervised session-leader child under launchd, leaves an
-# Aqua-born server alone, and takes the session over from a server born
-# outside that session (an SSH remote attach wins the socket at boot), because
-# such a server's panes cannot read the login keychain;
+# access. The guard runs the server as a supervised session-leader child under
+# launchd, leaves an Aqua-born server under a live guard alone, and takes the
+# session over from a server born outside that session (an SSH remote attach
+# wins the socket at boot), because such a server's panes cannot read the login keychain;
 # bin/fm-remote-herdr-owner-lib.sh owns that birth test. Doctor remains
 # invokable over the plain-SSH bootstrap path to inspect and repair that worker.
 # SSH cannot create an Aqua session, so a host with no GUI login is a human
@@ -253,7 +253,8 @@ resolve_launch_agent_shell() {
 
 # Login-shell command that execs the Firstmate-owned guard, which in turn runs
 # the resolved herdr as its setsid child so launchd keeps one supervised job in
-# the Aqua session, or exits 0 when an Aqua-born server already owns the session.
+# the Aqua session, or exits 0 when an Aqua-born server under a live guard
+# already owns the session.
 # KeepAlive={SuccessfulExit=false} is load-bearing for that exit: an
 # unconditional KeepAlive would respawn the job every throttle interval
 # forever while a foreign server holds the socket, exactly the loop this guard
