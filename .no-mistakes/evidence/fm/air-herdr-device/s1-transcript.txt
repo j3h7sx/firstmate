@@ -1,0 +1,17 @@
+$ bin/fm-remote-herdr-guard.sh /opt/homebrew/bin/herdr fm-lab-guard-5149-12631 &
+guard pid: 10968
+--- guard log
+fm-remote-herdr-guard: no server owns session fm-lab-guard-5149-12631
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 as a session leader supervised by this launch agent (pid 10968)
+herdr server running; you can use any herdr CLI command in another terminal.
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+did you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.
+--- herdr status server --json --session fm-lab-guard-5149-12631
+{"status":"running","running":true,"version":"0.9.3","protocol":22,"capabilities":{"live_handoff":true,"detached_server_daemon":true,"endpoint_protocol_generation":1,"surface_interest":true,"health_check":true,"ssh_agent_registration":true},"compatible":true,"endpoint_compatible":true,"socket":"/Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock","session":"fm-lab-guard-5149-12631","restart_needed":false,"server_binary_stale":false}
+
+--- processes (pid ppid pgid sess comm)
+  PID  PPID  PGID   SESS STAT COMMAND
+10968 10965 10965      0 SN   bash bin/fm-remote-herdr-guard.sh /opt/homebrew/bin/herdr fm-lab-guard-5149-12631
+11026 10968 11026      0 SNs  /opt/homebrew/bin/herdr server --session fm-lab-guard-5149-12631

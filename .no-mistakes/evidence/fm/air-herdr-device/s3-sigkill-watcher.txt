@@ -1,0 +1,6 @@
+guard 17341, server 17416
+{"running":true,"dd":true}
+$ kill -KILL 17341   (guard)
+server 17416 alive? no  (after 1.0s)
+lingering processes for session: none
+{"running":false}

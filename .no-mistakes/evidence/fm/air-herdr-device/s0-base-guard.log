@@ -1,0 +1,7 @@
+fm-remote-herdr-guard: no server owns session fm-lab-guard-5149-12631
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 inside this launch agent (pid 30893)
+herdr server running; you can use any herdr CLI command in another terminal.
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+did you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.

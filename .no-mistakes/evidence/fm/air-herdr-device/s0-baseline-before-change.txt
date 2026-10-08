@@ -1,0 +1,9 @@
+BASELINE (b062eb94 guard, execs herdr in the foreground)
+fm-remote-herdr-guard: no server owns session fm-lab-guard-5149-12631
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 inside this launch agent (pid 30893)
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+{"running":true,"detached_server_daemon":false}
+  PID  PPID STAT COMMAND
+30893 30687 SN   /opt/homebrew/bin/herdr server --session fm-lab-guard-5149-12631

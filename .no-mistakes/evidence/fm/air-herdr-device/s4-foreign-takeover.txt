@@ -1,0 +1,18 @@
+$ bin/fm-herdr-lab.sh provision fm-lab-guard-5149-12631   # foreign server, not born under the guard
+rc=0
+{"running":true,"dd":false}
+foreign server pid(s): 23426 herdr server --session fm-lab-guard-5149-12631
+--- guard log
+fm-remote-herdr-guard: session fm-lab-guard-5149-12631 is served by pid 23426 born outside the Aqua login session (unknown); its panes cannot reach the login keychain, taking the session over
+fm-remote-herdr-guard: session fm-lab-guard-5149-12631 released its socket after 0 tenths of a second
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 as a session leader supervised by this launch agent (pid 23485)
+herdr server running; you can use any herdr CLI command in another terminal.
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+did you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.
+--- after
+{"running":true,"dd":true}
+  PID  PPID STAT COMMAND
+23485 23391 SN   bash bin/fm-remote-herdr-guard.sh /opt/homebrew/bin/herdr fm-lab-guard-5149-12631
+23606 23485 SNs  /opt/homebrew/bin/herdr server --session fm-lab-guard-5149-12631

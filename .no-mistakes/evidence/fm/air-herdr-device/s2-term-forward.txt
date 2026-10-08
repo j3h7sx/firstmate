@@ -1,0 +1,18 @@
+--- watcher (child of server 11026)
+  PID  PPID  PGID STAT COMMAND
+11033 11026 11026 SN   perl -MPOSIX -e \012    my $guard = shift;\012    POSIX::setsid() != -1 or die "setsid: $!\n";\012    my $server = $$;\012    defined(my $watcher = fork) or die "fork: $!\n";\012    if (!$watcher) {\012      sleep 1 while getppid() == $server && kill 0, $guard;\012      exit 0 if getppid() != $server;\012      kill "TERM", $server;\012      my $tenths = 0;\012      select undef, undef, undef, 0.1 while getppid() == $server && $tenths++ < 100;\012      kill "KILL", $server if getppid() == $server;\012      exit 0;\012    }\012    exec @ARGV or die "exec $ARGV[0]: $!\n";\012   10968 /opt/homebrew/bin/herdr server --session fm-lab-guard-5149-12631
+14672 11026 11026 SN   (curl)
+$ kill -TERM 10968   (guard)
+guard alive after TERM? no
+server 11026 alive? no
+--- guard log
+fm-remote-herdr-guard: no server owns session fm-lab-guard-5149-12631
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 as a session leader supervised by this launch agent (pid 10968)
+herdr server running; you can use any herdr CLI command in another terminal.
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+did you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.
+fm-remote-herdr-guard: the herdr server for session fm-lab-guard-5149-12631 exited with status 0
+--- status
+{"status":"not_running","running":false,"version":null,"protocol":null,"capabilities":null,"compatible":null,"endpoint_compatible":null,"socket":"/Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock","session":"fm-lab-guard-5149-12631","restart_needed":false,"server_binary_stale"

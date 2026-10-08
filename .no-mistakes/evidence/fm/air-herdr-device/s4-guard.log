@@ -1,0 +1,9 @@
+fm-remote-herdr-guard: session fm-lab-guard-5149-12631 is served by pid 23426 born outside the Aqua login session (unknown); its panes cannot reach the login keychain, taking the session over
+fm-remote-herdr-guard: session fm-lab-guard-5149-12631 released its socket after 0 tenths of a second
+fm-remote-herdr-guard: starting the herdr server for session fm-lab-guard-5149-12631 as a session leader supervised by this launch agent (pid 23485)
+herdr server running; you can use any herdr CLI command in another terminal.
+api socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr.sock
+client socket: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-client.sock
+logs: /Users/solodev/.config/herdr/sessions/fm-lab-guard-5149-12631/herdr-server.log
+did you mean to open the Herdr TUI? run `herdr`; you do not need `herdr server`.
+fm-remote-herdr-guard: the herdr server for session fm-lab-guard-5149-12631 exited with status 0

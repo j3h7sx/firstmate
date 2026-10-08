@@ -1,0 +1,4 @@
+not ok - this host does not expose a holder's environment (macOS hides platform-binary environments; jq at /usr/bin/jq must be a non-platform binary): 
+ok - a missing herdr CLI is a human gap that --fix never claims to close
+ok - an absent launch agent is a fixable gap and the read-only run changes nothing
+not ok - --fix left a repairable host unready: expected exit 0, got 1
