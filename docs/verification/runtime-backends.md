@@ -1196,6 +1196,9 @@ It forwards TERM, INT and HUP to that child and exits with its status.
 Before the exec, the child forks a watcher into the server's new session, out of reach of a SIGKILL of the guard's process group.
 When the guard pid is gone, the watcher sends TERM to the server and sends KILL after 10 seconds if the server is still its parent; it exits as soon as the server is gone.
 So a SIGKILL of the guard (launchd's `ExitTimeOut` escalation on `bootout` or `kickstart -k`, an OOM kill, or a manual `kill -9`) does not leave the server running without a supervisor.
+launchd can start the next guard while that watcher still stops the old server.
+The guard exits 0 for an Aqua-born server only when the server's parent is the running pid of the launchd job named by its `XPC_SERVICE_NAME`, that is a live guard.
+Any other Aqua-born server, including that old one, goes through the stop, wait and start takeover, so the session always ends with a supervised server.
 The child keeps the launch agent's Aqua audit session and environment.
 
 A throwaway Aqua agent `dev.firstmate.lab.<lab-session>` in `gui/501`, with the same `ProgramArguments` shape as the doctor renders and a named non-default lab session, ran the changed guard.

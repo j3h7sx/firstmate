@@ -281,7 +281,8 @@ It acts on whichever server owns the `fm-remote` socket:
 | Socket owner | Guard action |
 | --- | --- |
 | Nothing | Runs the server as a session-leader child of the launchd job, which Herdr requires of a saved machine. |
-| An Aqua-born server | Exits 0. |
+| An Aqua-born server whose parent is the running launch agent job, that is a live guard | Exits 0. |
+| An Aqua-born server with no live guard, such as one whose guard was killed with SIGKILL | Stops the server, waits for the socket, and starts its own supervised server. |
 | Any other (foreign) server | Stops the foreign server and takes the session over, closing its panes so the parent firstmate relaunches its mates into the Aqua-born server. |
 
 `KeepAlive={SuccessfulExit=false}` lets that exit 0 rest instead of respawning against a held socket.

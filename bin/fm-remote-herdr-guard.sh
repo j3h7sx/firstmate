@@ -33,9 +33,12 @@
 #   no server owns the session socket  -> run `herdr server --session <s>` as a
 #                                          setsid child and wait for it
 #   the owner was born in the Aqua session (launchd or the Aqua remote-job
-#   worker)                            -> exit 0, leave it alone
+#   worker) and its parent is the running launchd job named by its
+#   XPC_SERVICE_NAME, that is a live guard -> exit 0, leave it alone
 #   the owner was born anywhere else (an SSH remote attach, a shell over
-#   ssh/mosh, or a birth it cannot prove) -> `herdr server stop`, wait until the
+#   ssh/mosh, or a birth it cannot prove), or it has no live guard (its guard
+#   was SIGKILLed and the watcher is stopping it, or an older guard exec'd it)
+#                                       -> `herdr server stop`, wait until the
 #                                          socket is released, then start
 #                                          `herdr server --session <s>` at once
 #                                          so the socket is rebound before a
@@ -70,6 +73,14 @@ log() { printf 'fm-remote-herdr-guard: %s\n' "$*"; }
 
 herdr_status() { # prints the session's status JSON, empty when herdr fails
   HERDR_SESSION="$SESSION" "$HERDR_BIN" status --json --session "$SESSION" 2>/dev/null || true
+}
+
+owner_has_live_guard() { # <pid>: its parent is the running launchd job named by its XPC_SERVICE_NAME
+  local ppid label
+  ppid=$(ps -o ppid= -p "$1" 2>/dev/null | tr -d ' ')
+  label=$(fm_remote_herdr_process_env "$1" | sed -n 's/^XPC_SERVICE_NAME=//p' | head -1)
+  [ -n "$ppid" ] && [ "$ppid" != 1 ] && [ -n "$label" ] \
+    && fm_remote_herdr_gui_job_has_pid "$(id -u)" "$label" "$ppid"
 }
 
 status_running() { # <status-json>
@@ -134,12 +145,14 @@ else
   BIRTH=$(fm_remote_herdr_owner_birth "$OWNER")
 fi
 
-if fm_remote_herdr_birth_is_aqua "$BIRTH"; then
-  log "session $SESSION is served by pid $OWNER born in the Aqua login session ($BIRTH); nothing to do"
+if ! fm_remote_herdr_birth_is_aqua "$BIRTH"; then
+  log "session $SESSION is served by ${OWNER:+pid }${OWNER:-an unproven process} born outside the Aqua login session ($BIRTH); its panes cannot reach the login keychain, taking the session over"
+elif owner_has_live_guard "$OWNER"; then
+  log "session $SESSION is served by pid $OWNER born in the Aqua login session ($BIRTH) under a live guard; nothing to do"
   exit 0
+else
+  log "session $SESSION is served by pid $OWNER born in the Aqua login session ($BIRTH) without a live guard; taking the session over so this launch agent supervises it"
 fi
-
-log "session $SESSION is served by ${OWNER:+pid }${OWNER:-an unproven process} born outside the Aqua login session ($BIRTH); its panes cannot reach the login keychain, taking the session over"
 HERDR_SESSION="$SESSION" "$HERDR_BIN" server stop --session "$SESSION" >/dev/null 2>&1 \
   || log "herdr server stop for session $SESSION did not succeed; waiting for the socket anyway"
 i=0

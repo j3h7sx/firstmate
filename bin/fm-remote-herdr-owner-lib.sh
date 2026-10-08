@@ -45,6 +45,8 @@
 #                dev.firstmate.remote-job is loaded only in gui/<uid>
 #       unknown  none of the above; XPC_SERVICE_NAME alone, including value 0,
 #                does not prove an Aqua birth
+#   fm_remote_herdr_gui_job_has_pid <uid> <label> <pid>
+#     Succeeds when launchctl reports <pid> as the running pid of gui/<uid>/<label>.
 #   fm_remote_herdr_birth_is_aqua <birth>
 #     Succeeds only for launchd and worker. `unknown` is deliberately not
 #     Aqua: a server that cannot prove its birth is treated like a foreign one,
@@ -102,16 +104,18 @@ fm_remote_herdr_process_ancestry() { # <pid>
   done
 }
 
-fm_remote_herdr_gui_job_proves_owner() { # <uid> <label> <pid>
-  local uid=$1 label=$2 pid=$3 job
-  [ -n "$label" ] && [ "$label" != 0 ] || return 1
-  job=$(launchctl print "gui/$uid/$label" 2>/dev/null) || return 1
-  if printf '%s\n' "$job" | awk -v expected="$pid" '
+fm_remote_herdr_gui_job_has_pid() { # <uid> <label> <pid>
+  launchctl print "gui/$1/$2" 2>/dev/null | awk -v expected="$3" '
     $1 == "pid" && $2 == "=" && $3 == expected { found = 1 }
     END { exit found ? 0 : 1 }
-  '; then
-    return 0
-  fi
+  '
+}
+
+fm_remote_herdr_gui_job_proves_owner() { # <uid> <label> <pid>
+  local uid=$1 label=$2 pid=$3
+  [ -n "$label" ] && [ "$label" != 0 ] || return 1
+  launchctl print "gui/$uid/$label" >/dev/null 2>&1 || return 1
+  fm_remote_herdr_gui_job_has_pid "$uid" "$label" "$pid" && return 0
   ! launchctl print "user/$uid/$label" >/dev/null 2>&1
 }
 
