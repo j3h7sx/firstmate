@@ -47,6 +47,11 @@
 #                does not prove an Aqua birth
 #   fm_remote_herdr_gui_job_has_pid <uid> <label> <pid>
 #     Succeeds when launchctl reports <pid> as the running pid of gui/<uid>/<label>.
+#   fm_remote_herdr_owner_has_live_guard <pid>
+#     Succeeds when the parent of <pid> is the running pid of the gui/<uid>
+#     launchd job named by its XPC_SERVICE_NAME, that is a live guard. A
+#     server whose guard is gone (reparented to pid 1) or that an older guard
+#     exec'd as the job itself does not have one.
 #   fm_remote_herdr_birth_is_aqua <birth>
 #     Succeeds only for launchd and worker. `unknown` is deliberately not
 #     Aqua: a server that cannot prove its birth is treated like a foreign one,
@@ -109,6 +114,14 @@ fm_remote_herdr_gui_job_has_pid() { # <uid> <label> <pid>
     $1 == "pid" && $2 == "=" && $3 == expected { found = 1 }
     END { exit found ? 0 : 1 }
   '
+}
+
+fm_remote_herdr_owner_has_live_guard() { # <pid>
+  local ppid label
+  ppid=$(ps -o ppid= -p "$1" 2>/dev/null | tr -d ' ')
+  label=$(fm_remote_herdr_process_env "$1" | sed -n 's/^XPC_SERVICE_NAME=//p' | head -1)
+  [ -n "$ppid" ] && [ "$ppid" != 1 ] && [ -n "$label" ] \
+    && fm_remote_herdr_gui_job_has_pid "$(id -u)" "$label" "$ppid"
 }
 
 fm_remote_herdr_gui_job_proves_owner() { # <uid> <label> <pid>

@@ -286,6 +286,9 @@ It acts on whichever server owns the `fm-remote` socket:
 | Any other (foreign) server | Stops the foreign server and takes the session over, closing its panes so the parent firstmate relaunches its mates into the Aqua-born server. |
 
 `KeepAlive={SuccessfulExit=false}` lets that exit 0 rest instead of respawning against a held socket.
+The doctor uses the same rule: it reports `herdr-server` as `ok` only for an Aqua-born server under a live guard.
+It reports any other running server as `fixable`, and `--fix` reloads the launch agent so the guard takes the session over.
+This includes a server that an older guard started as the launchd job itself, which Herdr does not accept as a saved machine.
 The guard's header owns the decision table, and [`bin/fm-remote-herdr-owner-lib.sh`](../bin/fm-remote-herdr-owner-lib.sh) owns the birth markers it reads.
 
 ### Other repairs and limits

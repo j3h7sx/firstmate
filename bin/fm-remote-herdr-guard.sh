@@ -75,14 +75,6 @@ herdr_status() { # prints the session's status JSON, empty when herdr fails
   HERDR_SESSION="$SESSION" "$HERDR_BIN" status --json --session "$SESSION" 2>/dev/null || true
 }
 
-owner_has_live_guard() { # <pid>: its parent is the running launchd job named by its XPC_SERVICE_NAME
-  local ppid label
-  ppid=$(ps -o ppid= -p "$1" 2>/dev/null | tr -d ' ')
-  label=$(fm_remote_herdr_process_env "$1" | sed -n 's/^XPC_SERVICE_NAME=//p' | head -1)
-  [ -n "$ppid" ] && [ "$ppid" != 1 ] && [ -n "$label" ] \
-    && fm_remote_herdr_gui_job_has_pid "$(id -u)" "$label" "$ppid"
-}
-
 status_running() { # <status-json>
   [ "$(printf '%s' "$1" | jq -r '.server.running // false' 2>/dev/null)" = true ]
 }
@@ -147,7 +139,7 @@ fi
 
 if ! fm_remote_herdr_birth_is_aqua "$BIRTH"; then
   log "session $SESSION is served by ${OWNER:+pid }${OWNER:-an unproven process} born outside the Aqua login session ($BIRTH); its panes cannot reach the login keychain, taking the session over"
-elif owner_has_live_guard "$OWNER"; then
+elif fm_remote_herdr_owner_has_live_guard "$OWNER"; then
   log "session $SESSION is served by pid $OWNER born in the Aqua login session ($BIRTH) under a live guard; nothing to do"
   exit 0
 else
