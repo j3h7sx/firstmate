@@ -280,7 +280,7 @@ It acts on whichever server owns the `fm-remote` socket:
 
 | Socket owner | Guard action |
 | --- | --- |
-| Nothing | Execs the server in the foreground under launchd. |
+| Nothing | Runs the server as a session-leader child of the launchd job, which Herdr requires of a saved machine. |
 | An Aqua-born server | Exits 0. |
 | Any other (foreign) server | Stops the foreign server and takes the session over, closing its panes so the parent firstmate relaunches its mates into the Aqua-born server. |
 

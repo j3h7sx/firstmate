@@ -17,7 +17,7 @@
 # shell (`-l -c`) so the server inherits the account's own environment; the
 # gui/<uid> launchd domain it is bootstrapped into, not the shell, is what
 # gives the server and its panes the Aqua audit session and login-keychain
-# access. The guard execs the server in the foreground under launchd, leaves an
+# access. The guard runs the server as a supervised session-leader child under launchd, leaves an
 # Aqua-born server alone, and takes the session over from a server born
 # outside that session (an SSH remote attach wins the socket at boot), because
 # such a server's panes cannot read the login keychain;
@@ -250,9 +250,9 @@ resolve_launch_agent_shell() {
   printf '%s' /bin/sh
 }
 
-# Login-shell command that execs the Firstmate-owned guard, which in turn execs
-# the resolved herdr so launchd keeps one foreground process in the Aqua
-# session, or exits 0 when an Aqua-born server already owns the session.
+# Login-shell command that execs the Firstmate-owned guard, which in turn runs
+# the resolved herdr as its setsid child so launchd keeps one supervised job in
+# the Aqua session, or exits 0 when an Aqua-born server already owns the session.
 # KeepAlive={SuccessfulExit=false} is load-bearing for that exit: an
 # unconditional KeepAlive would respawn the job every throttle interval
 # forever while a foreign server holds the socket, exactly the loop this guard

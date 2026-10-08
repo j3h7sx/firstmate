@@ -12,19 +12,28 @@
 # the login shell, is what gives this process and every server it execs the
 # Aqua audit session and login-keychain access; the login shell only gives the
 # server the account's own environment.
-# `herdr server` stays in the foreground under launchd, as verified in
-# docs/verification/runtime-backends.md under "fm-remote server birth and login-keychain access", so the final exec provides the complete supervision lifecycle.
+# The server runs as this script's child, made a session leader with setsid
+# before it execs herdr: Herdr reports the detached_server_daemon capability,
+# which `herdr machine add` requires of a saved machine, only when the server
+# is its own session leader, and a launchd job never is one. The child keeps
+# the agent's Aqua audit session and environment, so panes keep keychain
+# access. The script waits on the server, forwards TERM, INT and HUP to it
+# (it no longer shares the job's process group, so launchd's own kill misses
+# it), and exits with its status, so a crash or kill asks launchd for a retry.
+# docs/verification/runtime-backends.md ("fm-remote server birth and
+# login-keychain access" and "fm-remote detached server daemon") holds the
+# dated evidence.
 #
 # Decision, made once per launch (exit codes matter under SuccessfulExit=false:
 # 0 tells launchd the job is done until something restarts it, non-zero asks
 # for a retry after the throttle interval):
-#   no server owns the session socket  -> exec `herdr server --session <s>`
-#                                          (foreground, launchd-supervised)
+#   no server owns the session socket  -> run `herdr server --session <s>` as a
+#                                          setsid child and wait for it
 #   the owner was born in the Aqua session (launchd or the Aqua remote-job
 #   worker)                            -> exit 0, leave it alone
 #   the owner was born anywhere else (an SSH remote attach, a shell over
 #   ssh/mosh, or a birth it cannot prove) -> `herdr server stop`, wait until the
-#                                          socket is released, then exec
+#                                          socket is released, then start
 #                                          `herdr server --session <s>` at once
 #                                          so the socket is rebound before a
 #                                          reconnecting SSH attach can start
@@ -65,8 +74,24 @@ status_running() { # <status-json>
 }
 
 start_server() {
-  log "starting the herdr server for session $SESSION inside this launch agent (pid $$)"
-  exec "$HERDR_BIN" server --session "$SESSION"
+  local child rc
+  command -v perl >/dev/null 2>&1 || { log "perl does not resolve on the launch agent PATH, so the server cannot become a session leader"; exit 1; }
+  log "starting the herdr server for session $SESSION as a session leader supervised by this launch agent (pid $$)"
+  # Herdr reports detached_server_daemon only when the server is its own session
+  # leader (getsid(0) == getpid()), which saved machines require. A launchd job
+  # is a process-group leader but never a session leader, and setsid(2) fails
+  # for a group leader, so the server is a background child that calls setsid
+  # and then execs herdr, keeping this agent's Aqua audit session and environment.
+  HERDR_SESSION="$SESSION" perl -MPOSIX -e 'POSIX::setsid() != -1 or die "setsid: $!\n"; exec @ARGV or die "exec $ARGV[0]: $!\n"' \
+    "$HERDR_BIN" server --session "$SESSION" &
+  child=$!
+  # The server no longer shares this job's process group, so launchd's own kill
+  # (kickstart -k, bootout) reaches only this script; forward it to the server.
+  trap 'kill -TERM "$child" 2>/dev/null' TERM INT HUP
+  wait "$child"; rc=$?
+  while kill -0 "$child" 2>/dev/null; do wait "$child"; rc=$?; done
+  log "the herdr server for session $SESSION exited with status $rc"
+  exit "$rc"
 }
 
 STATUS=$(herdr_status)
