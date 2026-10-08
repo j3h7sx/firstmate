@@ -1193,6 +1193,9 @@ Herdr reports `capabilities.detached_server_daemon` as `getsid(0) == getpid()` f
 A launchd job is a process-group leader but not a session leader, so a server exec'd directly by the launch agent reported `false`.
 `bin/fm-remote-herdr-guard.sh` therefore starts the server as a background child that calls `setsid` through perl and then execs herdr, and waits on it.
 It forwards TERM, INT and HUP to that child and exits with its status.
+Before the exec, the child forks a watcher into the server's new session, out of reach of a SIGKILL of the guard's process group.
+When the guard pid is gone, the watcher sends TERM to the server and sends KILL after 10 seconds if the server is still its parent; it exits as soon as the server is gone.
+So a SIGKILL of the guard (launchd's `ExitTimeOut` escalation on `bootout` or `kickstart -k`, an OOM kill, or a manual `kill -9`) does not leave the server running without a supervisor.
 The child keeps the launch agent's Aqua audit session and environment.
 
 A throwaway Aqua agent `dev.firstmate.lab.<lab-session>` in `gui/501`, with the same `ProgramArguments` shape as the doctor renders and a named non-default lab session, ran the changed guard.

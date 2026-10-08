@@ -20,6 +20,9 @@
 # access. The script waits on the server, forwards TERM, INT and HUP to it
 # (it no longer shares the job's process group, so launchd's own kill misses
 # it), and exits with its status, so a crash or kill asks launchd for a retry.
+# A watcher in the server's session stops the server when this script is gone,
+# so a SIGKILL of the script (launchd's ExitTimeOut escalation, an OOM kill)
+# does not leave the server running without a supervisor.
 # docs/verification/runtime-backends.md ("fm-remote server birth and
 # login-keychain access" and "fm-remote detached server daemon") holds the
 # dated evidence.
@@ -82,8 +85,27 @@ start_server() {
   # is a process-group leader but never a session leader, and setsid(2) fails
   # for a group leader, so the server is a background child that calls setsid
   # and then execs herdr, keeping this agent's Aqua audit session and environment.
-  HERDR_SESSION="$SESSION" perl -MPOSIX -e 'POSIX::setsid() != -1 or die "setsid: $!\n"; exec @ARGV or die "exec $ARGV[0]: $!\n"' \
-    "$HERDR_BIN" server --session "$SESSION" &
+  # Before the exec it forks a watcher into the server's new session, which a
+  # SIGKILL of this script's process group cannot reach: when this script is
+  # gone, the watcher stops the server (TERM, then KILL after 10 seconds), so
+  # the server never outlives its launch agent. The watcher exits as soon as
+  # the server is gone, because it is then no longer the watcher's parent.
+  HERDR_SESSION="$SESSION" perl -MPOSIX -e '
+    my $guard = shift;
+    POSIX::setsid() != -1 or die "setsid: $!\n";
+    my $server = $$;
+    defined(my $watcher = fork) or die "fork: $!\n";
+    if (!$watcher) {
+      sleep 1 while getppid() == $server && kill 0, $guard;
+      exit 0 if getppid() != $server;
+      kill "TERM", $server;
+      my $tenths = 0;
+      select undef, undef, undef, 0.1 while getppid() == $server && $tenths++ < 100;
+      kill "KILL", $server if getppid() == $server;
+      exit 0;
+    }
+    exec @ARGV or die "exec $ARGV[0]: $!\n";
+  ' "$$" "$HERDR_BIN" server --session "$SESSION" &
   child=$!
   # The server no longer shares this job's process group, so launchd's own kill
   # (kickstart -k, bootout) reaches only this script; forward it to the server.
